@@ -1,0 +1,242 @@
+---
+swagger: "2.0"
+info:
+  description: "SBI open banking initiative will offer seamless payment experience\
+    \ which will take customer to next level of digital experience, Payment API will\
+    \ be integrated easily in your application giving access to real time payment\
+    \ transactions while keeping great focus on security. Our API will initiate payments\
+    \ and track it through your app or web service for a seamless payment experience."
+  version: "1.0.0"
+  title: "JWT Verify"
+  termsOfService: "Please refer to SBI usage policy at developer.sbi.co.in/tos"
+  contact:
+    email: "apisupport@sbi.co.in"
+  x-ibm-name: "jwt-verify"
+basePath: "/accounts/deposits/casa/payments/v2"
+tags:
+- name: "payments"
+  description: "This put operation is used to transfer funds from one intra bank customer\
+    \ account to another"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /fundsTransfer:
+    post:
+      tags:
+      - "fundsTransfer"
+      summary: "funds"
+      description: " This operation is used to transfer funds from one user account\
+        \ to another. <Night Enabled - Y/N>"
+      operationId: "fundTransfer"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "fundsTransfer"
+        description: "Transfer of funds from one SBI  CASA account to another SBI\
+          \ CASA account"
+        required: true
+        schema:
+          $ref: "#/definitions/fundTransferReq"
+        in: "body"
+      - name: "Authorization"
+        type: "string"
+        required: true
+        in: "header"
+        description: "Authorization Token"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/responseDetails"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/genericResponse"
+        408:
+          description: "Request Timeout"
+          schema:
+            $ref: "#/definitions/genericResponse"
+        412:
+          description: "Pre-condition failed"
+          schema:
+            $ref: "#/definitions/genericResponse"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/genericResponse"
+        503:
+          description: "Service Unavailable"
+          schema:
+            $ref: "#/definitions/genericResponse"
+securityDefinitions:
+  basic auth:
+    type: "basic"
+    description: ""
+    x-ibm-authentication-url:
+      url: "https://httpbin.org/basic-auth/raja/raja"
+  X-IBM-Client-Secret:
+    type: "apiKey"
+    description: ""
+    in: "header"
+    name: "X-IBM-Client-Secret"
+  X-IBM-Client-Id:
+    type: "apiKey"
+    description: ""
+    in: "header"
+    name: "X-IBM-Client-Id"
+definitions:
+  genericResponse:
+    properties:
+      status:
+        type: "integer"
+        description: "HTTP Status code.The maximum length of the field is 3 digits."
+      message:
+        type: "string"
+        description: "Short message description"
+        maxLength: 200
+    required:
+    - "status"
+    - "message"
+  fundTransferReq:
+    properties:
+      FROM_ACCOUNT_NUMBER:
+        description: "Account number from which the amount has to debited. Padd appropriate\
+          \ zeros to the left to make the number 17 digits"
+        type: "string"
+        maximum: 17
+      TO_ACCOUNT_NUMBER:
+        description: "Account number to which the amount has to credited. Padd appropriate\
+          \ zeros to the left to make the number 17 digits"
+        type: "string"
+        maximum: 60
+      TRANSFER_AMOUNT:
+        description: "Amount which has to be debited in INR. Last 3 digits symbol\
+          \ and 2 decimal places."
+        type: "string"
+        maximum: 17
+      REQUEST_TELLER_ID:
+        description: "Unique id of teller"
+        type: "string"
+        maximum: 7
+      REQUEST_AUTH_ID:
+        description: "Unique id of checker"
+        type: "string"
+        maximum: 7
+      BRANCH_CODE:
+        description: "Unique code of branch"
+        type: "string"
+        maximum: 5
+      SOURCE_ID:
+        description: "ID of source"
+        type: "string"
+        maximum: 5
+      REQUEST_REFERENCE_NUMBER:
+        description: "Unique reference number of created request"
+        type: "string"
+        maximum: 25
+      NARRATION:
+        type: "string"
+    required:
+    - "REQUEST_TELLER_ID"
+    - "REQUEST_AUTH_ID"
+    - "BRANCH_CODE"
+    - "SOURCE_ID"
+    - "REQUEST_REFERENCE_NUMBER"
+    - "FROM_ACCOUNT_NUMBER"
+    - "TRANSFER_AMOUNT"
+    - "TO_ACCOUNT_NUMBER"
+  responseDetails:
+    properties:
+      RESPONSE_DATE:
+        format: "date"
+        type: "string"
+        description: "Response Time  Stamp(dd-MM-yyyy hh:mm:ss)"
+        maxLength: 19
+      REQUEST_REFERENCE_NUMBER:
+        type: "string"
+        description: "Unique Reference Number created by calling app(LOTUS) for internal\
+          \ tracking"
+        maxLength: 25
+      JOURNAL_NUMBER:
+        type: "string"
+        description: "Unique number created by Bank after each successful transaction"
+        maxLength: 9
+    required:
+    - "RESPONSE_DATE"
+    - "REQUEST_REFERENCE_NUMBER"
+    - "JOURNAL_NUMBER"
+x-ibm-configuration:
+  enforced: true
+  testable: true
+  phase: "realized"
+  cors:
+    enabled: true
+  assembly:
+    execute:
+    - set-variable:
+        title: "set-variable"
+        actions:
+        - value: "{ \"alg\": \"HS256\",   \"kty\": \"oct\",   \"use\": \"sig\",  \
+            \ \"k\": \"o5yErLaE-dbgVpSw65Rq57OA9dHyaF66Q_Et5azPa-XUjbyP0w9iRWhR4kru09aFfQLXeIODIN4uhjElYKXt8n76jt0Pjkd2pqk4t9abRF6tnL19GV4pflfL6uvVKkP4weOh39tqHt4TmkBgF2P-gFhgssZpjwq6l82fz3dUhQ2nkzoLA_CnyDGLZLd7SZ1yv73uzfE2Ot813zmig8KTMEMWVcWSDvy61F06vs_6LURcq_IEEevUiubBxG5S2akNnWigfpbhWYjMI5M22FOCpdcDBt4L7K1-yHt95Siz0QUb0MNlT_X8F76wH7_A37GpKKJGqeaiNWmHkgWdE8QWDQ\"\
+            ,   \"kid\": \"hs256-key\" }"
+          add: "hs256-key"
+        - set: "hs256-enc-key"
+          value: "{   \"alg\": \"HS256\",   \"kty\": \"oct\",   \"use\": \"enc\",\
+            \   \"k\": \"ZH9ThXryoyHKKphgRVFOrxywbZtU9bMjy-ypLG2Kcdo\",   \"kid\"\
+            : \"hs256-enc-key\" }"
+        version: "1.0.0"
+    - gatewayscript:
+        title: "gatewayscript"
+        version: "1.0.0"
+        source: "var authNode = apim.getvariable('request.headers.authorization');\n\
+          apim.setvariable('input-jwt', authNode.replace(/^Bearer /g, ''));\n\n\n\
+          \   \n"
+    - jwt-validate:
+        title: "jwt-validate"
+        jwt: "input-jwt"
+        output-claims: "decoded-claims"
+        version: "1.0.0"
+        iss-claim: "apic"
+        aud-claim: "lotus"
+        jwe-jwk: "hs256-enc-key"
+        jws-jwk: "hs256-key"
+    - gatewayscript:
+        title: "gatewayscript"
+        version: "1.0.0"
+        source: "var claims = JSON.parse(apim.getvariable('decoded-claims'))\r\nvar\
+          \ claimSubject = claims.sub\r\nvar claimId = claims.idf\r\nvar requestedId\
+          \ = apim.getvariable('request.body.'+claimSubject)\r\n\r\nvar debugRes =\
+          \ {\r\n    req: requestedId,\r\n    cli: claimId,\r\n    val: requestedId\
+          \ === claimId\r\n}\r\n\r\n\r\napim.setvariable('requestedId', requestedId)\r\
+          \napim.setvariable('claimId', claimId)\r\n"
+    - switch:
+        title: "switch"
+        case:
+        - condition: "apim.getvariable('requestedId') === apim.getvariable('claimId')"
+          execute:
+          - set-variable:
+              title: "set-variable"
+              actions:
+              - set: "message.body"
+                value: "{ \t\"MODE_OF_OPERATION\": \"XXX\", \t\"CHEQUEBOOK_FLAG\"\
+                  : \"XX\", \t\"CIF_OWNER\": \"0\", \t\"HNI_CODE\": \"XX\", \t\"REQUEST_REFERENCE_NUMBER\"\
+                  : \"LOTUSXXX\", \t\"RESPONSE_DATE\": \"11-01-2018 16:42:54\" }"
+              version: "1.0.0"
+        - otherwise:
+          - gatewayscript:
+              title: "gatewayscript"
+              version: "1.0.0"
+              source: "var errBody = {\n    message: \"Invalid token\"\n};\n\napim.setvariable('message.body',\
+                \ JSON.stringify(errBody));\napim.setvariable('message.status.code',\
+                \ 403)\napim.setvariable('message.status.reason', 'Unauthorized')\n\
+                apim.output('application/json');"
+    catch: []
+security:
+- X-IBM-Client-Secret: []
+  X-IBM-Client-Id: []

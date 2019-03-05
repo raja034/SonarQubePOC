@@ -1,0 +1,91 @@
+{
+	"variables": [],
+	"info": {
+		"name": "JWT",
+		"_postman_id": "191e7e11-903e-d7f8-c10d-e7170420b91e",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "JWT Verify",
+			"request": {
+				"url": "https://api.eu.apiconnect.ibmcloud.com/rajagandhamtcscom-dev/sbi-cbd/accounts/deposits/casa/payments/v2/fundsTransfer\n",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "x-ibm-client-id",
+						"value": "046e06ab-3225-4875-b461-802d7c02b4a7",
+						"description": ""
+					},
+					{
+						"key": "x-ibm-client-secret",
+						"value": "wS3tE0jX4jX3bX3xQ7tU2aT5qK8rY5hR7fS1fA6tF4fS3xF8fS",
+						"description": ""
+					},
+					{
+						"key": "authorization",
+						"value": "Bearer eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIiwiY3R5IjoiSldUIn0..u_oBJz_dwMEyKUAa3TJtGg.gzPy73ghaX8D46CnJ2Ob0P8VXwshwLMuzXbSLebai0rApU_N3DK2eVJDddUcVt9a8ZXRPgas0LiNJZUCJU_Ka5OBMXGX5xb7FUu15J40W-sc_4PbEqXO2CfiJYWv3U6rJPk5fZBNmH3V8oHEqsybBRgb1GDISO0-sLF-CAFWdnSt6L3-WU8ai3whH7spkziBlUl1dGNCNZZU28NAfwiSBaEtItl7-XYyYOAX0AntDVj4Hf5F5kAiOfgD2NeWVTqqG8HP0GyPTxRtGg0fzBlqgtMQt-boWsgpfJqmpDGJd2hPgJyvr8SA7s6jwN-i-8_9-fezOg-ctTRMQuRYkCtkgq31Qj8__CX1sn-W8NSAfyAAiCZuq2iVrtb4dQneN1aj.1pOU6c5ITAieRrqKt8P46w",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"FROM_ACCOUNT_NUMBER\": \"36513034678177\",\r\n  \"TO_ACCOUNT_NUMBER\": \"5018351316513163\",\r\n  \"TRANSFER_AMOUNT\": \"6162537101918208\",\r\n  \"REQUEST_TELLER_ID\": \"8311011771678720\",\r\n  \"REQUEST_AUTH_ID\": \"6989366809329664\",\r\n  \"BRANCH_CODE\": \"necalozo\",\r\n  \"SOURCE_ID\": \"1302324075036672\",\r\n  \"REQUEST_REFERENCE_NUMBER\": \"5958857916416000\",\r\n  \"NARRATION\": \"vewpen\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "JWT Genarate",
+			"request": {
+				"url": "https://api.eu.apiconnect.ibmcloud.com/rajagandhamtcscom-dev/sbi-cbd/token\n",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "x-ibm-client-id",
+						"value": "046e06ab-3225-4875-b461-802d7c02b4a7",
+						"description": ""
+					},
+					{
+						"key": "iss-claim",
+						"value": "apic",
+						"description": ""
+					},
+					{
+						"key": "aud-claim",
+						"value": "lotus",
+						"description": ""
+					},
+					{
+						"key": "sub-claim",
+						"value": "FROM_ACCOUNT_NUMBER",
+						"description": ""
+					},
+					{
+						"key": "idf-claim",
+						"value": "36513034678177",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,133 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "JWT Genarator"
+  x-ibm-name: "jwt-genarator"
+  description: "Enable access to API's to authenticated users using API keys."
+host: "$(catalog.host)"
+basePath: "/"
+paths:
+  /token:
+    parameters:
+    - name: "iss-claim"
+      type: "string"
+      required: true
+      in: "header"
+      description: "Issuer claim"
+    - name: "aud-claim"
+      type: "string"
+      required: true
+      in: "header"
+      description: "Audience claim"
+    - name: "sub-claim"
+      type: "string"
+      required: true
+      in: "header"
+      description: "Subject claim"
+    - name: "idf-claim"
+      type: "string"
+      required: true
+      in: "header"
+      description: "Identifier claim"
+    get:
+      responses:
+        200:
+          description: "200 OK"
+securityDefinitions:
+  clientId:
+    type: "apiKey"
+    description: ""
+    in: "header"
+    name: "X-IBM-Client-Id"
+x-ibm-configuration:
+  assembly:
+    execute:
+    - set-variable:
+        title: "set-variable"
+        actions:
+        - value: "{ \"alg\": \"HS256\",   \"kty\": \"oct\",   \"use\": \"sig\",  \
+            \ \"k\": \"o5yErLaE-dbgVpSw65Rq57OA9dHyaF66Q_Et5azPa-XUjbyP0w9iRWhR4kru09aFfQLXeIODIN4uhjElYKXt8n76jt0Pjkd2pqk4t9abRF6tnL19GV4pflfL6uvVKkP4weOh39tqHt4TmkBgF2P-gFhgssZpjwq6l82fz3dUhQ2nkzoLA_CnyDGLZLd7SZ1yv73uzfE2Ot813zmig8KTMEMWVcWSDvy61F06vs_6LURcq_IEEevUiubBxG5S2akNnWigfpbhWYjMI5M22FOCpdcDBt4L7K1-yHt95Siz0QUb0MNlT_X8F76wH7_A37GpKKJGqeaiNWmHkgWdE8QWDQ\"\
+            ,   \"kid\": \"hs256-key\" }"
+          add: "hs256-key"
+        - value: "{   \"alg\": \"HS256\",   \"kty\": \"oct\",   \"use\": \"enc\",\
+            \   \"k\": \"ZH9ThXryoyHKKphgRVFOrxywbZtU9bMjy-ypLG2Kcdo\",   \"kid\"\
+            : \"hs256-enc-key\" }"
+          add: "hs256-enc-key"
+    - switch:
+        title: "switch"
+        case:
+        - condition: "((request.verb==='GET')&&(api.operation.path==='/token'))"
+          execute:
+          - gatewayscript:
+              title: "gatewayscript"
+              version: "1.0.0"
+              source: "var claims = {\n    idf: apim.getvariable('request.headers.idf-claim')\n\
+                }\napim.setvariable('private-claims', JSON.stringify(claims))"
+          - jwt-generate:
+              title: "jwt-generate"
+              jwt: "generated-jwt"
+              version: "1.0.0"
+              jwe-enc: "A128CBC-HS256"
+              jwe-alg: "dir"
+              jws-alg: "HS256"
+              jti-claim: true
+              jws-jwk: "hs256-key"
+              iss-claim: "request.headers.iss-claim"
+              aud-claim: "request.headers.aud-claim"
+              jwe-jwk: "hs256-enc-key"
+              sub-claim: "request.headers.sub-claim"
+              exp-claim: "20"
+              private-claims: "private-claims"
+          - gatewayscript:
+              title: "gs-token-response"
+              source: "var body = {\n    token: apim.getvariable('generated-jwt')\n\
+                };\n\napim.setvariable('message.body', JSON.stringify(body));\napim.output(\"\
+                application/json\")"
+          - set-variable:
+              title: "clear-claims-from-response-headers"
+              actions:
+              - clear: "message.headers.aud-claim"
+              - clear: "message.headers.sub-claim"
+              - clear: "message.headers.iss-claim"
+              - clear: "message.headers.idf-claim"
+              version: "1.0.0"
+        - otherwise:
+          - set-variable:
+              title: "set-variable"
+              actions:
+              - value: "302"
+                set: "message.status.code"
+              - set: "message.status.reason"
+                value: "Found"
+              - set: "message.headers.Location"
+                value: "https://myidp.ibm.com"
+    catch:
+    - errors:
+      - "RuntimeError"
+      execute:
+      - set-variable:
+          title: "set-variable"
+          actions:
+          - value: "400"
+            set: "message.status.code"
+          - set: "message.status.reason"
+            value: "Bad request"
+      - gatewayscript:
+          title: "gs-error-message"
+          source: "var errBody = {\n    message: \"Invalid request \"\n}\napim.setvariable('message.body',\
+            \ JSON.stringify(errBody));   \n"
+  enforced: true
+  testable: true
+  phase: "realized"
+  cors:
+    enabled: true
+  gateway: "datapower-gateway"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+security:
+- clientId: []
