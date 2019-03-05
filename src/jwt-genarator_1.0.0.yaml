@@ -67,7 +67,7 @@ x-ibm-configuration:
           - jwt-generate:
               title: "jwt-generate"
               jwt: "generated-jwt"
-              version: "1.0.0"
+              version: "2.0.0"
               jwe-enc: "A128CBC-HS256"
               jwe-alg: "dir"
               jws-alg: "HS256"
