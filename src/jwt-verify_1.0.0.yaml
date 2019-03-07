@@ -8,7 +8,7 @@ info:
     \ and track it through your app or web service for a seamless payment experience."
   version: "1.0.0"
   title: "JWT Verify"
-  termsOfService: "Please refer to SBI usage policy at developer.sbi.co.in/tos"
+  termsOfService: "Please refer to raja ka  usage policy at developer.sbi.co.in/tos"
   contact:
     email: "apisupport@sbi.co.in"
   x-ibm-name: "jwt-verify"
