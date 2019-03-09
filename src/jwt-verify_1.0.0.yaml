@@ -6,7 +6,7 @@ info:
     \ be integrated easily in your application giving access to real time payment\
     \ transactions while keeping great focus on security. Our API will initiate payments\
     \ and track it through your app or web service for a seamless payment experience."
-  version: "1.1.0"
+  version: "1.1.1"
   title: "JWT Verify"
   termsOfService: "Please refer to raja ka  usage policy at developer.sbi.co.in/tos"
   contact:
